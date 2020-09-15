@@ -1,11 +1,11 @@
-FROM golang:alpine3.6 AS binary
+FROM golang:1.14-alpine AS build
 ADD . /app
 WORKDIR /app
 RUN go build -o http
 
-FROM alpine:3.6
+FROM alpine:3.12
 WORKDIR /app
 ENV PORT 8000
 EXPOSE 8000
-COPY --from=binary /app/http /app
+COPY --from=build /app/http /app
 CMD ["/app/http"]
