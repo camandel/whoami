@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"net"
 	"net/http"
 	"os"
 )
@@ -27,6 +28,9 @@ const tpl = `
 	</head>
 	<body>
 		<h1>I'm {{.Hostname}}</h1>
+		{{range .IPAddr}}
+		<h1>{{.}}</h1>
+		{{end}}
 	</body>
 </html>`
 
@@ -47,20 +51,35 @@ func main() {
 
 	hostname, _ := os.Hostname()
 
+	// get IP addresses
+	var ipAddr []string
+	addrs, err := net.InterfaceAddrs()
+	if err == nil {
+		for _, a := range addrs {
+			if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+				if ipnet.IP.To4() != nil {
+					ipAddr = append(ipAddr, ipnet.IP.String())
+				}
+			}
+		}
+	}
+
 	data := struct {
 		Title    string
 		Color    string
 		Hostname string
+		IPAddr   []string
 	}{
 		Title:    "whoami",
 		Color:    color,
 		Hostname: hostname,
+		IPAddr:   ipAddr,
 	}
 
 	fmt.Fprintf(os.Stdout, "Listening on :%s\n", port)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(os.Stdout, "I'm %s (%s app)\n", hostname, color)
+		fmt.Fprintf(os.Stdout, "I'm %s %s - %s app\n", hostname, ipAddr, color)
 		t, err := template.New("webpage").Parse(tpl)
 		if err != nil {
 			log.Fatal("Error loading html template")

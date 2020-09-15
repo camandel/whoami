@@ -1,7 +1,5 @@
-whoami
-======
-
-Simple HTTP docker service that prints it's container ID in a colored webpage:
+# whoami
+Simple HTTP docker service that prints its container ID and IPs in a colored webpage:
 
     $ docker run -d -p 8000:8000 --name whoami -e COLOR=green camandel/whoami
     736ab83847bb12dddd8b09969433f3a02d64d5b0be48f7a5c59a594e3a6a3541
@@ -24,6 +22,7 @@ Simple HTTP docker service that prints it's container ID in a colored webpage:
         </head>
         <body>
             <h1>I'm 736ab83847bb</h1>
+            <h1>172.17.0.2</h1>
         </body>
     </html>
 
