@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// HTML template
 const tpl = `
 <!DOCTYPE html>
 <html>
@@ -29,7 +30,11 @@ const tpl = `
 	</body>
 </html>`
 
+// DefaultColor is used to set the default background color
+var DefaultColor = "red"
+
 func main() {
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
@@ -37,7 +42,7 @@ func main() {
 
 	color := os.Getenv("COLOR")
 	if color == "" {
-		color = "red"
+		color = DefaultColor
 	}
 
 	hostname, _ := os.Hostname()
@@ -59,12 +64,10 @@ func main() {
 		t, err := template.New("webpage").Parse(tpl)
 		if err != nil {
 			log.Fatal("Error loading html template")
-			os.Exit(1)
 		}
 		err = t.Execute(w, data)
 		if err != nil {
 			log.Fatal("Error parsing html template")
-			os.Exit(1)
 		}
 	})
 

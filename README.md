@@ -31,3 +31,13 @@ Enviroment variables:
 * PORT: port to listen (default 8000)
 * COLOR: backgroung color (default red)
 
+## Examples
+Run a container with different port and color:
+```
+docker run -d -p 8888:8888 -e PORT=8888 -e COLOR=green camandel/whoami
+```
+Create a new image with a different default color:
+```
+docker build --build-arg color=blue -t camandel/whoami:blue .
+docker run -d -p 8000:8000 --name whoami camandel/whoami:blue
+```
