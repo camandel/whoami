@@ -1,0 +1,46 @@
+name: whoami
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    strategy:
+      matrix:
+        colors: [red, green, blue]
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.14
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Build
+      run: go build -v .
+      env:
+        COLOR: ${{ matrix.colors }}
+
+    - name: Test with red color (default)
+      run: go test -v .
+
+    - name: Build the Docker image
+      run: docker build . --build-arg color=${{ matrix.colors }} --tag camandel/whoami:${{ matrix.colors }}
+
+#   tag:
+#     name: Tag images
+#     needs: Build
+#     steps:
+#       - name: Tag latest image
+#         run: docker tag camandel/whoami:red camandel/whoami:latest
+#       - name: Check images
+#         run: docker image ls

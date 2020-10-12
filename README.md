@@ -1,5 +1,5 @@
 # whoami
-Simple HTTP docker service that prints its container ID and IPs in a colored webpage:
+Simple HTTP docker service that prints its container ID and IPs in three different pages:
 
     $ docker run -d -p 8000:8000 --name whoami -e COLOR=green camandel/whoami
     736ab83847bb12dddd8b09969433f3a02d64d5b0be48f7a5c59a594e3a6a3541
@@ -25,6 +25,13 @@ Simple HTTP docker service that prints its container ID and IPs in a colored web
             <h1>172.17.0.2</h1>
         </body>
     </html>
+
+    $ curl $(hostname --all-ip-addresses | awk '{print $1}'):8000/simple
+    GREEN: I'm 736ab83847bb [172.17.0.2]
+
+    $ # same as above but now the output is tainted with the given color
+    $ curl $(hostname --all-ip-addresses | awk '{print $1}'):8000/colored
+    GREEN: I'm 736ab83847bb [172.17.0.2]
 
 Enviroment variables:
 * PORT: port to listen (default 8000)
