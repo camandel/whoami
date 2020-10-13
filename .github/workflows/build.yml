@@ -1,4 +1,4 @@
-name: whoami
+name: Build
 
 on:
   push:
@@ -35,12 +35,3 @@ jobs:
 
     - name: Build the Docker image
       run: docker build . --build-arg color=${{ matrix.colors }} --tag camandel/whoami:${{ matrix.colors }}
-
-#   tag:
-#     name: Tag images
-#     needs: Build
-#     steps:
-#       - name: Tag latest image
-#         run: docker tag camandel/whoami:red camandel/whoami:latest
-#       - name: Check images
-#         run: docker image ls
