@@ -76,7 +76,7 @@ func html(w http.ResponseWriter, r *http.Request) {
 }
 
 // simple output
-func simple(w http.ResponseWriter, req *http.Request) {
+func text(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(os.Stdout, "I'm %s %s - %s app (simple)\n", hostname, ipAddr, color)
 	fmt.Fprintf(w, "%s: I'm %s %s\n", strings.ToUpper(color), hostname, ipAddr)
 }
@@ -94,6 +94,15 @@ func colored(w http.ResponseWriter, r *http.Request) {
 		ansiColor = Blue
 	}
 	fmt.Fprintf(w, fmt.Sprintf("%s%s: I'm %s %s%s\n", ansiColor, strings.ToUpper(color), hostname, ipAddr, Reset))
+}
+
+// chose default route based on browser
+func auto(w http.ResponseWriter, r *http.Request) {
+	if strings.HasPrefix(r.UserAgent(), "curl") {
+		colored(w, r)
+	} else {
+		html(w, r)
+	}
 }
 
 func main() {
@@ -122,8 +131,9 @@ func main() {
 		}
 	}
 
-	http.HandleFunc("/", html)
-	http.HandleFunc("/simple", simple)
+	http.HandleFunc("/", auto)
+	http.HandleFunc("/html", html)
+	http.HandleFunc("/text", text)
 	http.HandleFunc("/colored", colored)
 
 	log.Fatal(http.ListenAndServe(":"+port, nil))
